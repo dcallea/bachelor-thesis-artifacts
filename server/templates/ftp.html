@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="/static/style.css" />
+    <title>Shell Script</title>
+    <script>
+    	function fetchScriptOutput() {
+    		fetch('/script-output')
+    			.then(response => response.text())
+    			.then(data => {
+    				document.getElementById("output").innerText = data;
+				})
+				.catch(error => {
+					console.error("Error fetching script output:", error);
+				});
+		}
+
+		// fetch script output every 3 seconds
+		setInterval(fetchScriptOutput, 3000);
+
+		// fetch script output once on site load
+		window.onload = fetchScriptOutput
+	</script>
+</head>
+<body>
+	<p hidden>The CEO insisted we add this page for him to check the time,
+	he told us the "clock in his Windows stopped working" ...
+	We had to store the date script in his FTP user folder, seems insecure
+	but i'm not getting paid enough to care. </p>
+    <h1>Output of date script (updates every 3 seconds)</h1>
+    <pre id="output">Loading...</pre>
+</body>
+</html>
+
+

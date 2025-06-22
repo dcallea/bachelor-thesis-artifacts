@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="/static/style.css" />
+    <title>Cybersecurity Challenge</title>
+</head>
+<body>
+    <h1>Cybersecurity Challenge</h1>
+    <p>Welcome to the Cybersecurity Challenge!</p>
+    <p>The CEO of EvilCorp is about to log in to the company network at /login.
+       You are tasked with infiltrating the network and finding
+       the hidden flag! Good luck. </p>
+
+	<p>When you click on Start, the CEO will log in and the challenge begins.</p>
+	<p><i>Hint: Start the packet sniffer before starting, you can find
+	it in the home directory. psniff is used to capture packets, psniffreader
+	to read the packet file once you're done capturing. You can stop the packet
+	sniffer with CTRL-C.</i></p>
+
+	<button onclick="callBotLogin()">Start</button>
+	<p id="response"></p>
+
+	<script>
+		function callBotLogin() {
+			fetch("/bot-login", { method: "POST" })
+				.then(response => response.text())
+				.then(data => document.getElementById("response").innerText = data)
+				.catch(error => console.error("Error:", error));
+		}
+	</script>
+
+	<br><br>
+	<p>When you think you have obtained the flag, paste it here and check if it's correct!
+	</p>
+
+	<input type="text" id="flag" placeholder="Flag..." style="margin-bottom: 4px;">
+	<button onclick="checkFlag()">Check</button>
+	<p id="resultMessage"></p>
+
+	<script>
+		async function sha256(flag) {
+			const encoder = new TextEncoder();
+			const data = encoder.encode(flag);
+			const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+			const hashArray = Array.from(new Uint8Array(hashBuffer));
+			const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+			return hashHex;
+		}
+
+		async function checkFlag() {
+			const userInput = document.getElementById("flag").value;
+			const result = document.getElementById("resultMessage");
+
+			const userHash = await sha256(userInput);
+			const correctHash = "fee5f6faeb9af82dc238d3bb5ed936b2dbfab929f55e0909190591a70d7d1e05"
+			if (userHash === correctHash) {
+				result.textContent = "Correct! Congratulations.";
+				result.style.color = "green";
+			} else {
+				result.textContent = "Incorrect. Try again.";
+				result.style.color = "red";
+			}
+		}
+	</script>
+
+</body>
+</html>
+
+
